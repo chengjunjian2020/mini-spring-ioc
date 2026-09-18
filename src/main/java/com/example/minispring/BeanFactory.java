@@ -48,6 +48,22 @@ public class BeanFactory {
     }
 
     /**
+     * 预先创建所有已注册的单例 Bean。
+     * <p>
+     * getBean 本身已经包含“缓存优先、未命中则创建”的逻辑，因此这里不需要
+     * 重复编写创建代码，只要逐个调用 getBean 即可。
+     */
+    public void preInstantiateSingletons() {
+        System.out.println("\n--- 开始预实例化单例 Bean ---");
+        for (BeanDefinition definition : beanDefinitions.values()) {
+            Class<?> beanClass = definition.getBeanClass();
+            System.out.printf("[预实例化] 获取 %s%n", beanClass.getSimpleName());
+            getBean(beanClass);
+        }
+        System.out.println("--- 预实例化结束 ---");
+    }
+
+    /**
      * 用反射调用唯一构造器。构造器的每一个参数都会递归调用 getBean，
      * 因而先创建最底层依赖，再创建当前对象。
      */

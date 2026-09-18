@@ -11,11 +11,14 @@ public class Application {
         beanFactory.registerBeanDefinition(new BeanDefinition("userService", UserService.class));
         beanFactory.registerBeanDefinition(new BeanDefinition("userController", UserController.class));
 
-        System.out.println("\n--- 第一次获取 UserController：触发递归创建 ---");
+        // 模拟 Spring 在容器启动阶段预先创建非懒加载的单例 Bean。
+        beanFactory.preInstantiateSingletons();
+
+        System.out.println("\n--- 预实例化后获取 UserController：直接命中单例缓存 ---");
         UserController controller = beanFactory.getBean(UserController.class);
         controller.handleRequest();
 
-        System.out.println("\n--- 第二次获取 UserController：直接复用单例 ---");
+        System.out.println("\n--- 再次获取 UserController：仍然复用同一个单例 ---");
         UserController sameController = beanFactory.getBean(UserController.class);
         System.out.println("[验证] 两次是否同一个对象：" + (controller == sameController));
     }
